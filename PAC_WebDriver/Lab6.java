@@ -22,9 +22,9 @@ public class Lab6 {
 		driver.get("https://www.amazon.in/");
 		//Login
 		driver.findElement(By.id("nav-link-accountList")).click();
-		driver.findElement(By.id("ap_email")).sendKeys("ashwinmurugan1@gmail.com");
+		driver.findElement(By.id("ap_email")).sendKeys("ashwin@gmail.com");
 		driver.findElement(By.id("continue")).click();
-		driver.findElement(By.id("ap_password")).sendKeys("Ashwin@2611");
+		driver.findElement(By.id("ap_password")).sendKeys("**password**");
 		driver.findElement(By.id("signInSubmit")).click();
 		
 		//Search
