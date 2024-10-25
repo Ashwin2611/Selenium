@@ -2,10 +2,16 @@ package PAC_WebDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
+import java.time.Duration;
+
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TC_Google {
 
@@ -32,7 +38,14 @@ public class TC_Google {
 		System.out.println("Current URL: "+driver.getCurrentUrl());
 //		System.out.println("Source contains:"+driver.getPageSource().contains("Premium"));
 //		System.out.println("Source: "+driver.getPageSource());
-		driver.close();
+		JavascriptExecutor js=(JavascriptExecutor)driver;
+		js.executeScript("alert('Ashwin')");
+		WebDriverWait wait=new WebDriverWait(driver,Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.alertIsPresent());
+		Alert Alt=driver.switchTo().alert();
+		Alt.accept();
+		
+//		driver.close();
 		
 
 	}

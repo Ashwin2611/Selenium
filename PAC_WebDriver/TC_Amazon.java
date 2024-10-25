@@ -1,6 +1,13 @@
 package PAC_WebDriver;
 
+import org.testng.annotations.Test;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +20,25 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
-public class Lab6 {
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterSuite;
 
-	public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
-		WebDriverManager.edgedriver().setup();
-		WebDriver driver=new EdgeDriver();
-		driver.get("https://www.amazon.in/");
-		//Login
-		driver.findElement(By.id("nav-link-accountList")).click();
-		driver.findElement(By.id("ap_email")).sendKeys("ashwinmurugan1@gmail.com");
+public class TC_Amazon {
+  WebDriver driver;
+  @Test(dataProvider = "dp")
+  public void f(String username, String password,String Monitor,String Mobile) throws InterruptedException {
+	  driver.findElement(By.id("nav-link-accountList")).click();
+		driver.findElement(By.id("ap_email")).sendKeys(username);
 		driver.findElement(By.id("continue")).click();
-		driver.findElement(By.id("ap_password")).sendKeys("Ashwin@2611");
+		driver.findElement(By.id("ap_password")).sendKeys(password);
 		driver.findElement(By.id("signInSubmit")).click();
 		
 		//Search
 		WebElement Search=driver.findElement(By.id("twotabsearchtextbox"));
-		Search.sendKeys("Monitors");
+		Search.sendKeys(Monitor);
 		Search.submit();
 		
 		//Dropdown
@@ -82,7 +91,7 @@ public class Lab6 {
 		WebElement SearchMobile=driver.findElement(By.id("twotabsearchtextbox"));
 		SearchMobile.clear();
 //		SearchMobile.sendKeys("");
-		SearchMobile.sendKeys("Mobile");
+		SearchMobile.sendKeys(Mobile);
 		SearchMobile.submit();
 		
 		//checkBox
@@ -107,21 +116,57 @@ public class Lab6 {
 				Alts.accept();
 			}
 		}
+  }
+  @BeforeMethod
+  public void beforeMethod() {
+	  WebDriverManager.edgedriver().setup();
+	  driver=new EdgeDriver();
+	  driver.get("https://www.amazon.in/");
+  }
+
+  @AfterMethod
+  public void afterMethod() {
+	  WebElement signout=driver.findElement(By.id("nav-link-accountList"));
 		
-		//Hover Element
+	  Actions act=new Actions(driver);
 		
-		WebElement signout=driver.findElement(By.id("nav-link-accountList"));
+	  act.moveToElement(signout).perform();
 		
-		Actions act=new Actions(driver);
-		
-		act.moveToElement(signout).perform();
-		
-		
-		driver.findElement(By.id("nav-item-signout")).click();
-		
-//		js.executeScript("'//*[@id=\"nav-link-accountList\"]'.hover()");
-			
-		
-	}
+	  driver.findElement(By.id("nav-item-signout")).click();
+	  
+	  driver.quit();
+  }
+
+
+  @DataProvider
+  public Object[][] dp() {
+    return new Object[][] {
+      new Object[] { "ashwinmurugan1@gmail.com", "Ashwin@2611","Monitors","Mobile" },
+      new Object[] { "ashwin@gmail.com", "12345","Phone","Laptop" },
+    };
+  }
+  @BeforeClass
+  public void beforeClass() {
+  }
+
+  @AfterClass
+  public void afterClass() {
+  }
+
+  @BeforeTest
+  public void beforeTest() {
+  }
+
+  @AfterTest
+  public void afterTest() {
+  }
+
+  @BeforeSuite
+  public void beforeSuite() {
+  }
+
+  @AfterSuite
+  public void afterSuite() {
+  }
 
 }
