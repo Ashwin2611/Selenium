@@ -3,23 +3,37 @@ package PAC_WebDriver;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class TC_Login {
-
-	public static void main(String[] args) throws InterruptedException {
+    @Test
+	void login() throws InterruptedException {
 		// TODO Auto-generated method stub
 		
 		WebDriverManager.edgedriver().setup();
 		WebDriver driver=new EdgeDriver();
+		driver.get("https://demo.opencart.com/en-gb?route=account/login");
+		
+		TC_Login_POM LP=new TC_Login_POM(driver);
+		
+		LP.enterusername("ashwinmurugan1@gmail.com");
+		
+		LP.enterpassword("12345");
+		
+		JavascriptExecutor js=(JavascriptExecutor)driver;
+		js.executeScript("window.scrollBy(0,300);");
+		
+		LP.Loginbtn();
+		
         try {
-            driver.get("https://demo.opencart.com/");
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             
             // Wait until the "My Account" element is clickable

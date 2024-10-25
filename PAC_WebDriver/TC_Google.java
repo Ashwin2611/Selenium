@@ -12,10 +12,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
 
 public class TC_Google {
-
-	public static void main(String[] args) {
+	@Test
+	void google()
+	{
 		// TODO Auto-generated method stub
 		WebDriverManager.edgedriver().setup();
 		WebDriver driver=new EdgeDriver();

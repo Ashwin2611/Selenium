@@ -63,7 +63,7 @@ public class TC_TestNg {
 	  return new Object[][] {
 		  new Object[] {"Monitor"},
 		  new Object[] {"Mobile"}
-	  }
+	  };
   }
   @BeforeClass
   public void beforeClass() {

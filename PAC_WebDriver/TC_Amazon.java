@@ -28,31 +28,34 @@ import org.testng.annotations.AfterSuite;
 
 public class TC_Amazon {
   WebDriver driver;
+  TC_Amazon_POM Amaz;
   @Test(dataProvider = "dp")
   public void f(String username, String password,String Monitor,String Mobile) throws InterruptedException {
-	  driver.findElement(By.id("nav-link-accountList")).click();
-		driver.findElement(By.id("ap_email")).sendKeys(username);
-		driver.findElement(By.id("continue")).click();
-		driver.findElement(By.id("ap_password")).sendKeys(password);
-		driver.findElement(By.id("signInSubmit")).click();
+	  
+	  	Amaz.ClickMethod("nav-link-accountList", "id");
+	  	Amaz.SendKeysMethod("ap_email","id",username);
+	  	Amaz.ClickMethod("continue", "id");
+	  	Amaz.SendKeysMethod("ap_password", "id", password);
+	  	Amaz.ClickMethod("signInSubmit", "id");
 		
 		//Search
-		WebElement Search=driver.findElement(By.id("twotabsearchtextbox"));
+	  	WebElement Search=Amaz.DriverMethod("twotabsearchtextbox","id");
 		Search.sendKeys(Monitor);
 		Search.submit();
 		
 		//Dropdown
-		driver.findElement(By.xpath("//*[@id=\"a-autoid-0-announce\"]")).click();
-		driver.findElement(By.id("s-result-sort-select_1")).click();
+		Amaz.ClickMethod("//*[@id=\"a-autoid-0-announce\"]", "xpath");
+		Amaz.ClickMethod("s-result-sort-select_1", "id");
 		
 		//Scroll
 		JavascriptExecutor js=(JavascriptExecutor)driver;
 		js.executeScript("window.scrollBy(0,300);");
 		
 		Thread.sleep(8000);
-		//AddToCart
 		
-		WebElement item=driver.findElement(By.xpath("//*[@id=\"search\"]/div[1]/div[1]/div/span[1]/div[1]/div[3]/div/div/span/div/div/div/div[2]/div/div/div[1]/h2/a"));
+		//AddToCart
+		WebElement item=Amaz.DriverMethod("//*[@id=\"search\"]/div[1]/div[1]/div/span[1]/div[1]/div[3]/div/div/span/div/div/div/div[2]/div/div/div[1]/h2/a", "xpath");
+//		WebElement item=driver.findElement(By.xpath("//*[@id=\"search\"]/div[1]/div[1]/div/span[1]/div[1]/div[3]/div/div/span/div/div/div/div[2]/div/div/div[1]/h2/a"));
 		item.click();
 		
 		String itemName=item.getText();
@@ -61,15 +64,18 @@ public class TC_Amazon {
 		
 		driver.switchTo().window(list.get(1));
 		
-		driver.findElement(By.id("add-to-cart-button")).click();
+		Amaz.ClickMethod("add-to-cart-button", "id");
+//		driver.findElement(By.id("add-to-cart-button")).click();
 		
 		driver.navigate().back();
 		
-		driver.findElement(By.id("add-to-wishlist-button-submit")).click();
+		Amaz.ClickMethod("add-to-wishlist-button-submit", "id");
+//		driver.findElement(By.id("add-to-wishlist-button-submit")).click();
 		
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		
-		WebElement monitor=driver.findElement(By.xpath("//a[@id='huc-item-link']/span"));
+		WebElement monitor=Amaz.DriverMethod("//a[@id='huc-item-link']/span", "xpath");
+//		WebElement monitor=driver.findElement(By.xpath("//a[@id='huc-item-link']/span"));
 		
 		System.out.println(monitor.getText());
 		System.out.println(itemName);
@@ -85,29 +91,36 @@ public class TC_Amazon {
 		Alt.accept();
 		
 		//close Wishlist
-		driver.findElement(By.xpath("//*[@id=\"a-popover-3\"]/div/header/button")).click();
+		Amaz.ClickMethod("/html/body/div[8]/div/div/header/button", "xpath");
+//		driver.findElement(By.xpath("/html/body/div[8]/div/div/header/button")).click();
+		//*[@id="a-popover-2"]/div/header/button
 		
 		//Search Mobile in SearchBox
-		WebElement SearchMobile=driver.findElement(By.id("twotabsearchtextbox"));
+		WebElement SearchMobile=Amaz.DriverMethod("twotabsearchtextbox", "id");
+//		WebElement SearchMobile=driver.findElement(By.id("twotabsearchtextbox"));
 		SearchMobile.clear();
 //		SearchMobile.sendKeys("");
 		SearchMobile.sendKeys(Mobile);
 		SearchMobile.submit();
 		
 		//checkBox
-		WebElement Apple=driver.findElement(By.xpath("//*[@id=\"p_123/110955\"]/span/a"));
+		WebElement Apple=Amaz.DriverMethod("//*[@id=\"p_123/110955\"]/span/a", "xpath");
+//		WebElement Apple=driver.findElement(By.xpath("//*[@id=\"p_123/110955\"]/span/a"));
 		Apple.click();
+	
+		Amaz.ClickMethod("nav-cart", "id");
+//		driver.findElement(By.id("nav-cart")).click();
 		
-		driver.findElement(By.id("nav-cart")).click();
-		
-		List<WebElement> CartItem=driver.findElements(By.xpath("//div[@name='sc-quantity']/div/span[2]"));
+		List<WebElement> CartItem=Amaz.DriversMethod("//div[@name='sc-quantity']/div/span[2]", "xpath");
+//		List<WebElement> CartItem=driver.findElements(By.xpath("//div[@name='sc-quantity']/div/span[2]"));
 		System.out.print(CartItem);
 		
 		for(WebElement val:CartItem) {
 			System.out.println(val.getText());
 			if(Integer.parseInt(val.getText())>=1) {
 				System.out.println("Value More thst 1: "+val.getText());
-				WebElement decrement=driver.findElement(By.xpath("//button[@data-a-selector='decrement']"));
+				WebElement decrement=Amaz.DriverMethod("//button[@data-a-selector='decrement']", "xpath");
+//				WebElement decrement=driver.findElement(By.xpath("//button[@data-a-selector='decrement']"));
 				Thread.sleep(1000);
 				decrement.click();
 				js.executeScript("alert('CartItem is Empty')");
@@ -121,18 +134,21 @@ public class TC_Amazon {
   public void beforeMethod() {
 	  WebDriverManager.edgedriver().setup();
 	  driver=new EdgeDriver();
+	  Amaz=new TC_Amazon_POM(driver);
 	  driver.get("https://www.amazon.in/");
   }
 
   @AfterMethod
   public void afterMethod() {
-	  WebElement signout=driver.findElement(By.id("nav-link-accountList"));
+	  WebElement signout=Amaz.DriverMethod("nav-link-accountList", "id");
+//	  WebElement signout=driver.findElement(By.id("nav-link-accountList"));
 		
 	  Actions act=new Actions(driver);
 		
 	  act.moveToElement(signout).perform();
 		
-	  driver.findElement(By.id("nav-item-signout")).click();
+	  Amaz.ClickMethod("nav-item-signout", "id");
+//	  driver.findElement(By.id("nav-item-signout")).click();
 	  
 	  driver.quit();
   }
