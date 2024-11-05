@@ -2,6 +2,10 @@ package PAC_WebDriver;
 
 import org.testng.annotations.Test;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 import org.testng.annotations.BeforeMethod;
@@ -9,6 +13,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.BeforeClass;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,12 +22,15 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -44,7 +52,9 @@ public class TC_Amazon {
 //  String system2;
   int noofrows;
   XSSFSheet sheet;
-  static int cart;
+  static int cart=0;
+  ExtentReports extent;
+  ExtentTest test;
   
   
   
@@ -159,18 +169,27 @@ public class TC_Amazon {
   }
 
   @AfterMethod
-  public void afterMethod() {
-	  WebElement signout=Amaz.DriverMethod("nav-link-accountList", "id");
-//	  WebElement signout=driver.findElement(By.id("nav-link-accountList"));
-		
-	  Actions act=new Actions(driver);
-		
-	  act.moveToElement(signout).perform();
-		
-	  Amaz.ClickMethod("nav-item-signout", "id");
-//	  driver.findElement(By.id("nav-item-signout")).click();
+  public void afterMethod() throws IOException {
 	  
-//	  driver.quit();
+	  try {
+		  WebElement signout=Amaz.DriverMethod("nav-link-accountList", "id");
+//	  WebElement signout=driver.findElement(By.id("nav-link-accountList"));
+		  
+		  Actions act=new Actions(driver);
+		  
+		  act.moveToElement(signout).perform();
+		  
+		  Amaz.ClickMethod("nav-item-signout", "id");
+//	  driver.findElement(By.id("nav-item-signout")).click();
+		  
+		  driver.quit();  
+	  }catch(Exception e) {
+		  test.fail("Invalid user");
+		  File ssfile=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+		  FileUtils.copyFile(ssfile, new File("Invalid_user.jpg"));
+		  test.fail("Invalid user"+test.addScreenCaptureFromPath("C:\\Users\\ashwin.murugan\\eclipse-workspace\\sample\\Invalid_user.jpg"));
+		  extent.flush();
+	  }
   }
 
 
@@ -186,25 +205,25 @@ public class TC_Amazon {
 //	  String system1=prob.getProperty("sys1");
 //	  String system2=prob.getProperty("sys2");
 //	  System.out.println("uname:"+uname);
-	  
-	  for(cart=0;cart<noofrows;cart++) {
+	  List<Object[]> dataList = new ArrayList<>();
+	  System.out.println("I:"+cart);
+	  for(;cart<noofrows;cart++) {
 		  String uname=sheet.getRow(cart).getCell(0).getStringCellValue();
 		  String pass;
 		  if(sheet.getRow(cart).getCell(1).getCellType()==CellType.STRING) {
 			  pass=sheet.getRow(cart).getCell(1).getStringCellValue();
+			  System.out.println("Pass:"+pass);
 		  }else {
-			  int p=(int) sheet.getRow(cart).getCell(2).getNumericCellValue();
+			  int p=(int) sheet.getRow(cart).getCell(1).getNumericCellValue();
 			  pass=Integer.toString(p);
+			  System.out.println("Passs:"+pass);
 		  }
 		  String system1=sheet.getRow(cart).getCell(2).getStringCellValue();
 		  String system2=sheet.getRow(cart).getCell(3).getStringCellValue();
 		  System.out.println(uname);
-		  return new Object[][] {
-			  new Object[] { uname,pass,system1,system2},
-//      new Object[] { "ashwin@gmail.com", "12345","Phone","Laptop" },
-		  };  
+		  dataList.add(new Object[] { uname, pass, system1, system2 });
 	  }
-	return null;
+	  return dataList.toArray(new Object[0][]);
 	
   }
   @BeforeClass
@@ -217,15 +236,21 @@ public class TC_Amazon {
 //	  pass=prob.getProperty("password");
 //	  system1=prob.getProperty("sys1");
 //	  system2=prob.getProperty("sys2");
+	  extent=new ExtentReports();
+	  ExtentSparkReporter spark=new ExtentSparkReporter("AmazonReport.html");
+	  extent.attachReporter(spark);
+	  test=extent.createTest("Login Verification");
+	  
 	  InputStream input=new FileInputStream("C:\\Users\\ashwin.murugan\\eclipse-workspace\\sample\\Amazon_testSheet.xlsx");
 	  XSSFWorkbook workbook=new XSSFWorkbook(input);
 	  sheet=workbook.getSheet("Sheet1");
 	  noofrows=sheet.getPhysicalNumberOfRows();
-  }
+	  System.out.println("No of Rows:"+noofrows); 
+	}
 
   @AfterClass
   public void afterClass() {
-	  driver.quit();
+//	  driver.quit();
   }
 
   @BeforeTest
