@@ -9,10 +9,17 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.BeforeClass;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -20,6 +27,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.PageFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.AfterTest;
@@ -29,9 +37,20 @@ import org.testng.annotations.AfterSuite;
 public class TC_Amazon {
   WebDriver driver;
   TC_Amazon_POM Amaz;
+  Properties prob;
+//  String uname;
+//  String pass;
+//  String system1;
+//  String system2;
+  int noofrows;
+  XSSFSheet sheet;
+  static int cart;
+  
+  
+  
   @Test(dataProvider = "dp")
   public void f(String username, String password,String Monitor,String Mobile) throws InterruptedException {
-	  
+	  System.out.print("username"+username);
 	  	Amaz.ClickMethod("nav-link-accountList", "id");
 	  	Amaz.SendKeysMethod("ap_email","id",username);
 	  	Amaz.ClickMethod("continue", "id");
@@ -91,7 +110,7 @@ public class TC_Amazon {
 		Alt.accept();
 		
 		//close Wishlist
-		Amaz.ClickMethod("/html/body/div[8]/div/div/header/button", "xpath");
+		Amaz.ClickMethod("/html/body/div[10]/div/div/header/button", "xpath");
 //		driver.findElement(By.xpath("/html/body/div[8]/div/div/header/button")).click();
 		//*[@id="a-popover-2"]/div/header/button
 		
@@ -104,7 +123,7 @@ public class TC_Amazon {
 		SearchMobile.submit();
 		
 		//checkBox
-		WebElement Apple=Amaz.DriverMethod("//*[@id=\"p_123/110955\"]/span/a", "xpath");
+		WebElement Apple=Amaz.DriverMethod("//*[@id=\"p_123/46655\"]/span/a", "xpath");
 //		WebElement Apple=driver.findElement(By.xpath("//*[@id=\"p_123/110955\"]/span/a"));
 		Apple.click();
 	
@@ -131,10 +150,11 @@ public class TC_Amazon {
 		}
   }
   @BeforeMethod
-  public void beforeMethod() {
+  public void beforeMethod() throws IOException {
 	  WebDriverManager.edgedriver().setup();
 	  driver=new EdgeDriver();
 	  Amaz=new TC_Amazon_POM(driver);
+//	  Amaz=PageFactory.initElements(driver, TC_Amazon_POM.class);
 	  driver.get("https://www.amazon.in/");
   }
 
@@ -150,23 +170,62 @@ public class TC_Amazon {
 	  Amaz.ClickMethod("nav-item-signout", "id");
 //	  driver.findElement(By.id("nav-item-signout")).click();
 	  
-	  driver.quit();
+//	  driver.quit();
   }
 
 
   @DataProvider
-  public Object[][] dp() {
-    return new Object[][] {
-      new Object[] { "ashwinmurugan1@gmail.com", "Ashwin@2611","Monitors","Mobile" },
-      new Object[] { "ashwin@gmail.com", "12345","Phone","Laptop" },
-    };
+  public Object[][] dp() throws IOException{
+	  
+//	  String Proper=System.getProperty("user.dir");
+//	  Properties prob=new Properties();
+//	  InputStream input=new FileInputStream(Proper+"\\Amazon.properties");
+//	  prob.load(input);
+//	  String uname=prob.getProperty("username");
+//	  String pass=prob.getProperty("password");
+//	  String system1=prob.getProperty("sys1");
+//	  String system2=prob.getProperty("sys2");
+//	  System.out.println("uname:"+uname);
+	  
+	  for(cart=0;cart<noofrows;cart++) {
+		  String uname=sheet.getRow(cart).getCell(0).getStringCellValue();
+		  String pass;
+		  if(sheet.getRow(cart).getCell(1).getCellType()==CellType.STRING) {
+			  pass=sheet.getRow(cart).getCell(1).getStringCellValue();
+		  }else {
+			  int p=(int) sheet.getRow(cart).getCell(2).getNumericCellValue();
+			  pass=Integer.toString(p);
+		  }
+		  String system1=sheet.getRow(cart).getCell(2).getStringCellValue();
+		  String system2=sheet.getRow(cart).getCell(3).getStringCellValue();
+		  System.out.println(uname);
+		  return new Object[][] {
+			  new Object[] { uname,pass,system1,system2},
+//      new Object[] { "ashwin@gmail.com", "12345","Phone","Laptop" },
+		  };  
+	  }
+	return null;
+	
   }
   @BeforeClass
-  public void beforeClass() {
+  public void beforeClass() throws IOException {
+//	  String propt=System.getProperty("user.dir");
+//	  prob=new Properties();
+//	  InputStream input=new FileInputStream(propt+"\\Amazon.properties");
+//	  prob.load(input);
+//	  uname=prob.getProperty("username");
+//	  pass=prob.getProperty("password");
+//	  system1=prob.getProperty("sys1");
+//	  system2=prob.getProperty("sys2");
+	  InputStream input=new FileInputStream("C:\\Users\\ashwin.murugan\\eclipse-workspace\\sample\\Amazon_testSheet.xlsx");
+	  XSSFWorkbook workbook=new XSSFWorkbook(input);
+	  sheet=workbook.getSheet("Sheet1");
+	  noofrows=sheet.getPhysicalNumberOfRows();
   }
 
   @AfterClass
   public void afterClass() {
+	  driver.quit();
   }
 
   @BeforeTest

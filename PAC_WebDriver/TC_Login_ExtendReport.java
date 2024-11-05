@@ -1,13 +1,17 @@
-package PAC_WebDriver;
+  package PAC_WebDriver;
 
 import java.time.Duration;
 import java.util.Properties;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -16,14 +20,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_Login {
+public class TC_Login_ExtendReport {
     @Test
 	void login() throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 		
+    	ExtentReports extent =new ExtentReports();
+    	ExtentSparkReporter spark=new ExtentSparkReporter("report.html");
+    	extent.attachReporter(spark);
+    	ExtentTest test=extent.createTest("Verify your title");
+    	
     	String Projectpath=System.getProperty("user.dir");
     	Properties prob=new Properties();
     	InputStream input=new FileInputStream(Projectpath+"\\login.properties");
@@ -38,6 +50,15 @@ public class TC_Login {
 		WebDriver driver=new EdgeDriver();
 		driver.get(OpenUrl);
 		
+		if(driver.getTitle().equals("Your tore")) {
+			test.pass("title is matched");
+		}else {
+			test.fail("Title is not matched");
+			File ssfile=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			FileUtils.copyFile(ssfile, new File("s1.jpg"));
+			test.fail("Title is not match"+test.addScreenCaptureFromPath("C:\\Users\\ashwin.murugan\\eclipse-workspace\\sample\\s1.jpg"));
+		}
+		
 		TC_Login_POM LP=new TC_Login_POM(driver);
 		LOGIN_PageFactory obj=PageFactory.initElements(driver, LOGIN_PageFactory.class);
 		
@@ -51,17 +72,18 @@ public class TC_Login {
 		LP.Loginbtn();
 		
         try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        	Thread.sleep(3000);
+//            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             
             // Wait until the "My Account" element is clickable
-            WebElement myAccountLink = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#top > div > div.nav.float-end > ul > li:nth-child(2) > div")));
-            
-            // Click the "My Account" link
-            String value=myAccountLink.getAttribute("class");
-            System.out.println("Value"+value);
-            myAccountLink.click();
-//            Thread.sleep(2000);
-            System.out.println("My Account Link Class: " + myAccountLink.getAttribute("class"));
+//            WebElement myAccountLink = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#top > div > div.nav.float-end > ul > li:nth-child(2) > div")));
+//            
+//            // Click the "My Account" link
+//            String value=myAccountLink.getAttribute("class");
+//            System.out.println("Value"+value);
+//            myAccountLink.click();
+////            Thread.sleep(2000);
+//            System.out.println("My Account Link Class: " + myAccountLink.getAttribute("class"));
             
             // Wait for the login link to be visible (or whichever element you expect next)
 //            WebElement loginLink = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Login")));
@@ -88,7 +110,7 @@ public class TC_Login {
 //		driver.findElement(By.linkText("Login")).click();
 		
 //		driver.findElement(By.);
-		
+		extent.flush();
 		
 	}
 

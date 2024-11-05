@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -19,20 +21,39 @@ import org.testng.annotations.Test;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class TC_Login {
+public class TC_Login_Excel {
     @Test
 	void login() throws InterruptedException, IOException {
 		// TODO Auto-generated method stub
 		
-    	String Projectpath=System.getProperty("user.dir");
-    	Properties prob=new Properties();
-    	InputStream input=new FileInputStream(Projectpath+"\\login.properties");
-    	prob.load(input);
-    	String OpenUrl=prob.getProperty("url");
-    	String uname=prob.getProperty("username");
-    	String pass=prob.getProperty("password");
+//    	String Projectpath=System.getProperty("user.dir");
+//    	Properties prob=new Properties();
+//    	InputStream input=new FileInputStream(Projectpath+"\\login.properties");
+//    	prob.load(input);
+//    	String OpenUrl=prob.getProperty("url");
+//    	String uname=prob.getProperty("username");
+//    	String pass=prob.getProperty("password");
     	
+    	InputStream input =new FileInputStream("C:\\Users\\ashwin.murugan\\eclipse-workspace\\sample\\opencart_testsheet.xlsx");
+    	XSSFWorkbook workbook=new XSSFWorkbook(input);
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            System.out.println("Sheet name: " + workbook.getSheetName(i));
+        }
+    	XSSFSheet sheet=workbook.getSheet("Sheet1");
+    	System.out.println(sheet);
     	
+    	int noofrows=sheet.getPhysicalNumberOfRows();
+//    	int noofcol=sheet.
+    	System.out.println("rows:"+sheet.getRow(1).getCell(0).getCellType());
+//    	if(sheet.getRow(1).getCell(0).getCellType().equals("STRING")) {
+//    		System.out.print("hii");
+//    	}
+    	
+    	for(int i=0;i<noofrows;i++) {
+    		String OpenUrl=sheet.getRow(i).getCell(0).getStringCellValue();
+    		String uname=sheet.getRow(i).getCell(1).getStringCellValue();
+    		int num=(int) sheet.getRow(i).getCell(2).getNumericCellValue();
+    		String pass=Integer.toString(num);
     	
 		WebDriverManager.edgedriver().setup();
 		WebDriver driver=new EdgeDriver();
@@ -45,8 +66,11 @@ public class TC_Login {
 		
 		LP.enterpassword(pass);
 		
+		
 		JavascriptExecutor js=(JavascriptExecutor)driver;
-		js.executeScript("window.scrollBy(0,300);");
+		js.executeScript("window.scrollBy(0,500)");
+		
+		Thread.sleep(2000);
 		
 		LP.Loginbtn();
 		
@@ -88,6 +112,7 @@ public class TC_Login {
 //		driver.findElement(By.linkText("Login")).click();
 		
 //		driver.findElement(By.);
+    	}
 		
 		
 	}
