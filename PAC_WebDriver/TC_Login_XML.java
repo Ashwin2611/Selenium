@@ -27,6 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.opencart.pageobjects.TC_Login_POM;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class TC_Login_XML {

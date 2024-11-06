@@ -18,6 +18,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 
+import com.opencart.pageobjects.TC_Login_POM;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
