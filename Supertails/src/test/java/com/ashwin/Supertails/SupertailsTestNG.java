@@ -37,7 +37,7 @@ public class SupertailsTestNG {
   ExtentTest test;
   SuperTails_POM POM;
   @Test(dataProvider = "dp")
-  public void f(String cart) throws InterruptedException, IOException {
+  public void f(String cart,String close) throws InterruptedException, IOException {
 	  try {
 		  JavascriptExecutor js=(JavascriptExecutor)driver;
 		  js.executeScript("window.scrollBy(0,500);");
@@ -60,6 +60,9 @@ public class SupertailsTestNG {
 		  POM.ClickMethod("revamp_cartremove", "id");
 //	  Alt.accept();
 		  POM.ClickMethod("removeItem_yes", "className");
+//		  POM.ClickMethod("p[@xpath='rte text-spacing/p[0]']", close);
+		  String Out=driver.findElement(By.xpath("//div[@class='rte text-spacing']/p[1]")).getText();
+		  System.out.println("verify:"+Out);
 		  js.executeScript("alert('Cart Item is Empty')");
 		  Thread.sleep(2000);
 		  Alert Alt=driver.switchTo().alert();
@@ -69,7 +72,7 @@ public class SupertailsTestNG {
 		  test.fail("Did't Add Cart Item");
 		  File ssfile=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 		  FileUtils.copyFile(ssfile, new File("AddToCart.jpg"));
-	  test.fail("Didn't Add Any Item in the Cart"+test.addScreenCaptureFromPath("C:\\Users\\ashwin.murugan\\eclipse-workspace\\Supertails\\AddToCart.jpg"));
+	      test.fail("Didn't Add Any Item in the Cart"+test.addScreenCaptureFromPath("C:\\Users\\ashwin.murugan\\eclipse-workspace\\Supertails\\AddToCart.jpg"));
 		  ReadFile.Flush();
 	  }
 	  
@@ -87,7 +90,7 @@ public class SupertailsTestNG {
   public Object[][] dp() {
     return new Object[][] {
 //      new Object[] {"AddtoCart"},
-      new Object[] {"ItemAdd"}
+      new Object[] {"AddtoCart","CloseCart"}
     };
   }
   @BeforeClass
@@ -103,7 +106,7 @@ public class SupertailsTestNG {
 
   @AfterClass
   public void afterClass() {
-	  driver.quit();
+//	  driver.quit();
 	  ReadFile.Flush();
   }
 
