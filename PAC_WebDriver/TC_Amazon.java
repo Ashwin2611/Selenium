@@ -119,7 +119,7 @@ public class TC_Amazon {
 		Alt.accept();
 		
 		//close Wishlist
-		Amaz.ClickMethod("/html/body/div[10]/div/div/header/button", "xpath");
+		Amaz.ClickMethod("//button[@data-action=\"a-popover-close\"]", "xpath");
 //		driver.findElement(By.xpath("/html/body/div[8]/div/div/header/button")).click();
 		//*[@id="a-popover-2"]/div/header/button
 		

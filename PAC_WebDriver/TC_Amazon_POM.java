@@ -16,7 +16,7 @@ public class TC_Amazon_POM {
 		this.driver=driver;
 	}
 	
-	void ClickMethod(String val,String locator) {
+	public void ClickMethod(String val,String locator) {
 		if(locator.equalsIgnoreCase("xpath")) {
 			clickval=By.xpath(val);
 		}else if(locator.equalsIgnoreCase("id")) {
@@ -25,7 +25,7 @@ public class TC_Amazon_POM {
 		driver.findElement(clickval).click();
 	}
 	
-	void SendKeysMethod(String val,String locator,String sendkeyval) {
+	public void SendKeysMethod(String val,String locator,String sendkeyval) {
 		if(locator.equalsIgnoreCase("id")) {
 			clickval=By.id(val);
 		}else if(locator.equalsIgnoreCase("xpath")) {
@@ -34,7 +34,7 @@ public class TC_Amazon_POM {
 		driver.findElement(clickval).sendKeys(sendkeyval);
 	}
 	
-	WebElement DriverMethod(String val,String locator) {
+	public WebElement DriverMethod(String val,String locator) {
 		if(locator.equalsIgnoreCase("id")) {
 			return driver.findElement(By.id(val));
 		}
@@ -44,7 +44,7 @@ public class TC_Amazon_POM {
 		return null;
 	}
 	
-	List<WebElement> DriversMethod(String val,String locator) {
+	public List<WebElement> DriversMethod(String val,String locator) {
 		if(locator.equalsIgnoreCase("xpath")) {
 			return driver.findElements(By.xpath(val));
 		}
